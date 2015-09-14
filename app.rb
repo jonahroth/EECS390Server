@@ -15,12 +15,9 @@ end
 
 # /validate validates username-password combination
 get '/validate' do
-  @user = User.find_by(params[:user])
-  if @user
-
-  else
-
-  end
+  @user = User.find_by(:username => params[:username], :password => params[:password])
+  content_type :json
+  @user ? @user.to_json : {}.to_json
 end
 
 # /signup displays HTML to sign up
