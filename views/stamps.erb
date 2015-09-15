@@ -1,0 +1,16 @@
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Price</th>
+    <th>Description</th>
+  </tr>
+
+
+  <% @stamps.each do |s| %>
+    <tr>
+      <td><%= s.name %></td>
+      <td><%= s.price %></td>
+      <td><%= s.description %></td>
+    </tr>
+  <% end %>
+</table>

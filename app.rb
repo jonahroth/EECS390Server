@@ -34,7 +34,6 @@ end
 
 # /validate validates username-password combination
 get '/validate' do
-  #@user = User.find_by(:username => params[:username], :password => params[:password])
 
   @user = nil
   if @user = User.find_by(:username => params[:username])
@@ -43,20 +42,13 @@ get '/validate' do
       session[:username] = params[:username]
     end
   end
-  content_type :json
-  @user ? @user.to_json : {}.to_json
+  redirect "/about/#{@user.id}"
 end
 
 # /signup displays HTML to sign up
 
 # /create creates username-password combination
 post '/create' do
-  #@user = User.new(params[:user])
-  #if @user.save
-  #  redirect "/about/#{@user.id}"
-  #else
-  #  redirect "/"
-  #end
 
   puts "PARAMS:"
   puts params
@@ -69,8 +61,6 @@ post '/create' do
   @user.salt = password_salt
   @user.password_hash = password_hash
   @user.level = 1
-  logger.debug @user.username
-  logger.debug @user.salt
   @user.save
 
   session[:username] = params[:user][:username]
@@ -89,9 +79,28 @@ get '/about/:id' do
   end
 end
 
+get '/stamps' do
+  @stamps = Stamp.all
+  erb :stamps
+end
+
 get '/api/users' do
   content_type :json
   User.all.to_json
+end
+
+get '/api/user/:id' do
+  @user = User.find(params[:id])
+  content_Type :json
+  @user.to_json
+end
+
+get '/api/stamps' do
+
+end
+
+get '/api/stamp/:id' do
+
 end
 
 # /levelup/:id increments level by one
