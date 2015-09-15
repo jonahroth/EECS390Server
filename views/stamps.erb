@@ -1,8 +1,11 @@
+<%=current_user.username%>, you have <%= current_user.peanuts %> peanuts.
+
 <table>
   <tr>
     <th>Name</th>
     <th>Price</th>
     <th>Description</th>
+    <th>Purchase</th>
   </tr>
 
 
@@ -11,6 +14,18 @@
       <td><%= s.name %></td>
       <td><%= s.price %></td>
       <td><%= s.description %></td>
+      <td>
+        <% if @mine.include? s.id %>
+          Already purchased
+        <% elsif s.price <= @peanuts %>
+          <form action="/purchase" method="POST">
+            <input type="hidden" name="id" value="<%= s.id %>" />
+            <input type="submit" value="Buy Now" />
+          </form>
+        <% else %>
+          Can't purchase
+        <% end %>
+      </td>
     </tr>
   <% end %>
 </table>
