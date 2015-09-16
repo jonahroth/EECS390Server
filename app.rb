@@ -7,27 +7,6 @@ require './models/stamp'
 require './models/user_stamp'
 require 'bcrypt'
 
-=begin
-
-  /
-  /login
-  /validate
-  /create
-  /users
-  /stamps
-  /about/:id
-  /purchase/:userid/:stampid
-
-  /api
-    /validate
-    /create
-    /users
-    /stamps
-    /about/:id
-    /purchase/:userid/:stampid
-
-=end
-
 enable :sessions
 
 helpers do
@@ -60,21 +39,21 @@ helpers do
 
 end
 
+# displays HTML to sign up
 get '/' do
   erb :index
 end
 
-# /login displays HTML to log in
+# displays HTML to log in
 get '/login' do
   erb :login
 end
 
-# /validate validates username-password combination
+# validates username-password combination
 post '/validate' do
 
   @user = nil
   if @user = User.find_by(:username => params[:username])
-    logger.debug @user.attributes
     if @user.password_hash == BCrypt::Engine.hash_secret(params[:password], @user.salt)
       session[:username] = params[:username]
     end
@@ -82,9 +61,7 @@ post '/validate' do
   redirect "/about/#{@user.id}"
 end
 
-# /signup displays HTML to sign up
-
-# /create creates username-password combination
+# creates and commits username-password combination
 post '/create' do
 
   puts "PARAMS:"
@@ -109,7 +86,7 @@ post '/create' do
 
 end
 
-# /about/:id returns info about user id
+# returns info about user id
 get '/about/:id' do
   @user = User.find_by(:id => params[:id])
   if @user
@@ -119,6 +96,7 @@ get '/about/:id' do
   end
 end
 
+# displays all stamps with option to purchase
 get '/stamps' do
   @stamps = Stamp.all
   @mine = UserStamp.where(:user_id => userid).map {|us| us.stamp_id}
@@ -126,6 +104,7 @@ get '/stamps' do
   erb :stamps
 end
 
+# purchases a stamp and redirects to stamp list
 post '/purchase' do
   if login? && params.any?
     puts "PARAMS:"
@@ -142,29 +121,103 @@ post '/purchase' do
   end
 end
 
+
+
+### API CALLS TO RETURN JSON DATA ###
+# (API calls do not use cookies, sessions, or currently encryption/authentication of any kind)
+
+# returns a list of all users
 get '/api/users' do
   content_type :json
-  User.all.to_json
+  User.all.select(:id, :username, :level).to_json
 end
 
+# returns information about a specific user
 get '/api/user/:id' do
   @user = User.find(params[:id])
-  content_Type :json
+  content_type :json
   @user.to_json
 end
 
+# returns a list of all stamps with all information
 get '/api/stamps' do
-
+  @stamps = Stamp.all
+  content_type :json
+  @stamps.to_json
 end
 
+# returns information about one specific stamp
 get '/api/stamp/:id' do
-
+  @stamp = Stamp.find(params[:id])
+  content_type :json
+  @stamp.to_json
 end
 
-# /levelup/:id increments level by one
+# returns information about all stamps owned by specified user
+get '/api/stamps/user/:id' do
+  my_stamps = UserStamp.where(:user_id => params[:id]).map {|us| us.stamp_id}
+  @stamps = Stamp.where(:id => my_stamps)
+  content_type :json
+  @stamps.to_json
+end
 
-# /level/:id gets level of userid
+# purchases a stamp for a user and deducts peanuts appropriately
+# returns a stamp if purchased, or an empty JSON object if it failed
+# (stamp no longer available, user already owns, not enough peanuts, etc.)
+post '/api/purchase/:userid/:stampid' do
+  stamp = Stamp.find_by(:id => params[:stampid])
+  user = User.find_by(:id => params[:userid])
+  if !stamp || UserStamp.find_by(:user_id => user.id, :stamp_id => stamp.id) || user.peanuts < stamp.price
+    stamp = nil
+  else
+    UserStamp.create(:user_id => user.id, :stamp_id => stamp.id)
+    user.peanuts -= stamp.price
+    user.save
+  end
+  content_type :json
+  stamp.to_json
+end
 
-# /products gets list of products
+# increments level by one
+post '/api/levelup/:id' do
+  begin
+    user = User.find(params[:id])
+    user.level += 1
+    user.save
+    content_type :json
+    user.to_json
+  rescue
+    user = nil
+    content_type :json
+    user.to_json
+  end
+end
 
-# /products/:id gets certain product details
+# /level/:id gets level of userid, -1 if error
+get '/api/level/:id' do
+  begin
+    user = User.find(params[:id])
+    content_type :json
+    user.level
+  rescue
+    content_type :json
+    -1
+  end
+end
+
+# give some number of peanuts to a user
+post '/api/give/:id/:value' do
+  user = User.find(params[:id].to_i)
+  user.peanuts += params[:value].to_i
+  user.save
+  content_type :json
+  user.to_json
+end
+
+# remove all stamps for a user - testing purposes only
+get '/api/clear/:id' do
+  user = User.find(params[:id])
+  UserStamp.destroy_all(:user_id => user.id)
+  content_type :json
+  UserStamp.all.to_json
+end
