@@ -5,9 +5,15 @@ require 'json'
 require './models/user'
 require './models/stamp'
 require './models/user_stamp'
+require './models/lobby'
 require 'bcrypt'
 
 enable :sessions
+
+=begin
+  SQL table for users currently waiting
+  Admin page to create new stamps and perhaps install a set of stamps
+=end
 
 helpers do
 
@@ -50,15 +56,28 @@ get '/login' do
 end
 
 # validates username-password combination
-post '/validate' do
-
+post '/login' do
   @user = nil
   if @user = User.find_by(:username => params[:username])
     if @user.password_hash == BCrypt::Engine.hash_secret(params[:password], @user.salt)
       session[:username] = params[:username]
+      redirect "/about/#{@user.id}"
+    else
     end
   end
-  redirect "/about/#{@user.id}"
+end
+
+post '/validate' do
+  if @user = User.find_by(:username => params[:username])
+    if @user.password_hash == BCrypt::Engine.hash_secret(params[:password], @user.salt)
+      status 204
+      body ''
+    else
+      status 403
+      body ''
+    end
+  end
+
 end
 
 # creates and commits username-password combination
@@ -221,3 +240,18 @@ get '/api/clear/:id' do
   content_type :json
   UserStamp.all.to_json
 end
+
+
+=begin
+post '/api/wait/:id' do
+  user = User.find(params[:id])
+  lobby.append(user) unless lobby.include? user
+  puts request.ip
+  worthy_opponents = lobby.select {|u| u != user && u.level == user.level}
+  if worthy_opponents.any?
+    opponent = worthy_opponents.sample
+  end
+  # remove user and opponent from lobby
+  # notify user and opponent
+end
+=end

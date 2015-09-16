@@ -5,7 +5,7 @@
 - `gem install bundler`
 - `bundle install`
 - `ruby app.rb` to launch the server
-- Make HTTP requests to `127.0.0.1:4567`
+- To test locally: Make HTTP requests to `127.0.0.1:4567`
 
 # What each path does
 
