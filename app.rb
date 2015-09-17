@@ -10,9 +10,16 @@ require 'bcrypt'
 
 enable :sessions
 
-=begin
+=begin TODO
   SQL table for users currently waiting
   Admin page to create new stamps and perhaps install a set of stamps
+  Require validation on all user-specific API calls
+  On matchmaking - send data about which emojis are equipped, etc
+  Framework for purchasing and storing emojis
+  Check gamedoc - we need info about all equipment that a user has
+  EQUIPMENT is what you can buy - wallpaper, package, emojis
+  Wallpapers and packages get used up after you equip them
+  Stamps don't persist between games
 =end
 
 helpers do
@@ -43,6 +50,11 @@ helpers do
     me.save
   end
 
+  def valid params
+    @user = User.find_by(:username => params[:username])
+    @user && @user.password_hash == BCrypt::Engine.hash_secret(params[:password], @user.salt)
+  end
+
 end
 
 # displays HTML to sign up
@@ -58,26 +70,13 @@ end
 # validates username-password combination
 post '/login' do
   @user = nil
-  if @user = User.find_by(:username => params[:username])
-    if @user.password_hash == BCrypt::Engine.hash_secret(params[:password], @user.salt)
-      session[:username] = params[:username]
-      redirect "/about/#{@user.id}"
-    else
-    end
+  if validate params
+    session[:username] = params[:username]
+    redirect "/about/#{@user.id}"
+  else
+    status 401
+    body ''
   end
-end
-
-post '/validate' do
-  if @user = User.find_by(:username => params[:username])
-    if @user.password_hash == BCrypt::Engine.hash_secret(params[:password], @user.salt)
-      status 204
-      body ''
-    else
-      status 403
-      body ''
-    end
-  end
-
 end
 
 # creates and commits username-password combination
@@ -144,6 +143,17 @@ end
 
 ### API CALLS TO RETURN JSON DATA ###
 # (API calls do not use cookies, sessions, or currently encryption/authentication of any kind)
+
+# returns status 204 if username-password combination is correct, 401 if not
+post '/api/validate' do
+  if validate params
+    status 204
+    body ''
+  else
+    status 401
+    body ''
+  end
+end
 
 # returns a list of all users
 get '/api/users' do
@@ -241,9 +251,10 @@ get '/api/clear/:id' do
   UserStamp.all.to_json
 end
 
-
-=begin
+# add a user to the lobby
 post '/api/wait/:id' do
+  lobby = Lobby.all.to_a
+  puts lobby
   user = User.find(params[:id])
   lobby.append(user) unless lobby.include? user
   puts request.ip
@@ -254,4 +265,3 @@ post '/api/wait/:id' do
   # remove user and opponent from lobby
   # notify user and opponent
 end
-=end
