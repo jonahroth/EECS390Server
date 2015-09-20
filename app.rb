@@ -20,6 +20,9 @@ enable :sessions
   EQUIPMENT is what you can buy - wallpaper, package, emojis
   Wallpapers and packages get used up after you equip them
   Stamps don't persist between games
+
+  Known issues:
+    - "Stamp" is the wrong word for purchasable item.
 =end
 
 helpers do
@@ -50,9 +53,13 @@ helpers do
     me.save
   end
 
-  def valid params
-    @user = User.find_by(:username => params[:username])
-    @user && @user.password_hash == BCrypt::Engine.hash_secret(params[:password], @user.salt)
+  def valid x
+    @user = User.find_by(:username => x[:username])
+    puts x
+    puts @user.username
+    puts @user.password_hash
+    puts BCrypt::Engine.hash_secret(x[:password], @user.salt)
+    return @user && @user.password_hash == BCrypt::Engine.hash_secret(x[:password], @user.salt)
   end
 
 end
@@ -70,7 +77,7 @@ end
 # validates username-password combination
 post '/login' do
   @user = nil
-  if validate params
+  if valid params
     session[:username] = params[:username]
     redirect "/about/#{@user.id}"
   else
@@ -146,7 +153,7 @@ end
 
 # returns status 204 if username-password combination is correct, 401 if not
 post '/api/validate' do
-  if validate params
+  if valid params
     status 204
     body ''
   else

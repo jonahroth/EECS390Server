@@ -11,10 +11,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150916235228) do
+ActiveRecord::Schema.define(version: 20150917034736) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "emojis", force: :cascade do |t|
+    t.string  "name"
+    t.integer "price"
+    t.text    "description"
+    t.string  "path"
+  end
+
+  create_table "equipment", force: :cascade do |t|
+    t.string  "name"
+    t.integer "price"
+    t.text    "description"
+    t.string  "path"
+  end
 
   create_table "lobby", force: :cascade do |t|
     t.integer  "user_id"
@@ -25,6 +39,7 @@ ActiveRecord::Schema.define(version: 20150916235228) do
     t.string  "name"
     t.text    "description"
     t.integer "price"
+    t.string  "path"
   end
 
   create_table "user_stamps", force: :cascade do |t|
