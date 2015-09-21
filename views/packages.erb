@@ -6,25 +6,27 @@
     <th>Price</th>
     <th>Description</th>
     <th>Purchase</th>
+    <th>Currently have:</th>
   </tr>
 
 
   <% @packages.each do |s| %>
     <tr>
-      <td><%= s.name %></td>
-      <td><%= s.price %></td>
-      <td><%= s.description %></td>
+      <td><%= s[0].name %></td>
+      <td><%= s[0].price %></td>
+      <td><%= s[0].description %></td>
       <td>
-        <% if @mine.include? s.id %>
-          Already purchased
-        <% elsif s.price <= @peanuts %>
+        <% if s[0].price <= @peanuts %>
           <form action="/packages" method="POST">
-            <input type="hidden" name="id" value="<%= s.id %>" />
+            <input type="hidden" name="id" value="<%= s[0].id %>" />
             <input type="submit" value="Buy Now" />
           </form>
         <% else %>
           Can't purchase
         <% end %>
+      </td>
+      <td>
+        <%= s[1] %>
       </td>
     </tr>
   <% end %>

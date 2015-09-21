@@ -126,7 +126,9 @@ end
 
 # displays all packages with option to purchase
 get '/packages' do
-  @packages = Package.all
+  @packages = Package.all.map {|p| [p, UserPackage.where(:user_id => userid, :package_id => p.id).count]}
+  puts "@packages"
+  puts @packages
   @mine = UserPackage.where(:user_id => userid).map {|us| us.package_id}
   @peanuts = current_user.peanuts
   erb :packages
@@ -138,12 +140,14 @@ post '/packages' do
     puts "PARAMS:"
     puts params
     package = Package.find(params[:id].to_i)
-    if current_user.peanuts >= package.price && !UserPackage.find_by(:user_id => current_user.id, :package_id => package.id)
+    if current_user.peanuts >= package.price # && !UserPackage.find_by(:user_id => current_user.id, :package_id => package.id)
       UserPackage.create(:user_id => current_user.id, :package_id => package.id)
       pay_peanuts package.price
     else
     end
-    @packages = Package.all
+    @packages = Package.all.map {|p| [p, UserPackage.where(:user_id => userid, :package_id => p.id).count]}
+    puts "@packages"
+    puts @packages
     @mine = UserPackage.where(:user_id => userid).map {|us| us.package_id}
     @peanuts = current_user.peanuts
     erb :packages
