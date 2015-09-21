@@ -6,6 +6,8 @@ require './models/user'
 require './models/stamp'
 require './models/user_stamp'
 require './models/lobby'
+require './models/emoji'
+require './models/equipment'
 require 'bcrypt'
 
 enable :sessions
@@ -271,4 +273,11 @@ post '/api/wait/:id' do
   end
   # remove user and opponent from lobby
   # notify user and opponent
+end
+
+# view all users in the lobby
+get '/api/lobby' do
+  lobby = Lobby.all.map { |l| [l.user_id, l.time_added, User.find(l.user_id).username] }
+  content_type :json
+  lobby.to_json
 end
