@@ -3,13 +3,9 @@ require 'sinatra/activerecord'
 require './config/environments' #database configuration
 require 'json'
 require './models/user'
-#require './models/stamp'
-#require './models/user_stamp'
 require './models/package'
 require './models/user_package'
 require './models/lobby'
-#require './models/emoji'
-#require './models/equipment'
 require 'bcrypt'
 
 enable :sessions
@@ -22,17 +18,14 @@ enable :sessions
 
 
   SQL table for users currently waiting
-  Admin page to create new stamps and perhaps install a set of stamps
+  Admin page to create new packages and perhaps install a set of packages
   Require validation on all user-specific API calls
   On matchmaking - send data about which emojis are equipped, etc
   Framework for purchasing and storing emojis
   Check gamedoc - we need info about all equipment that a user has
   EQUIPMENT is what you can buy - wallpaper, package, emojis
   Wallpapers and packages get used up after you equip them
-  Stamps don't persist between games
 
-  Known issues:
-    - "Stamp" is the wrong word for purchasable item.
 =end
 
 helpers do
@@ -131,29 +124,33 @@ get '/about/:id' do
   end
 end
 
-# displays all stamps with option to purchase
-get '/stamps' do
-  @stamps = Stamp.all
-  @mine = UserStamp.where(:user_id => userid).map {|us| us.stamp_id}
+# displays all packages with option to purchase
+get '/packages' do
+  @packages = Package.all
+  @mine = UserPackage.where(:user_id => userid).map {|us| us.package_id}
   @peanuts = current_user.peanuts
-  erb :stamps
+  erb :packages
 end
 
-# purchases a stamp and redirects to stamp list
-post '/purchase' do
+# purchases a package and redirects to package list
+post '/packages' do
   if login? && params.any?
     puts "PARAMS:"
     puts params
-    stamp = Stamp.find(params[:id].to_i)
-    if current_user.peanuts >= stamp.price && !UserStamp.find_by(:user_id => current_user.id, :stamp_id => stamp.id)
-      UserStamp.create(:user_id => current_user.id, :stamp_id => stamp.id)
-      pay_peanuts stamp.price
+    package = Package.find(params[:id].to_i)
+    if current_user.peanuts >= package.price && !UserPackage.find_by(:user_id => current_user.id, :package_id => package.id)
+      UserPackage.create(:user_id => current_user.id, :package_id => package.id)
+      pay_peanuts package.price
     else
     end
-    redirect '/stamps'
+    @packages = Package.all
+    @mine = UserPackage.where(:user_id => userid).map {|us| us.package_id}
+    @peanuts = current_user.peanuts
+    erb :packages
   else
     redirect '/' #TODO handle invalid requests
   end
+
 end
 
 
@@ -185,43 +182,43 @@ get '/api/user/:id' do
   @user.to_json
 end
 
-# returns a list of all stamps with all information
-get '/api/stamps' do
-  @stamps = Stamp.all
+# returns a list of all packages with all information
+get '/api/packages' do
+  @packages = Package.all
   content_type :json
-  @stamps.to_json
+  @packages.to_json
 end
 
-# returns information about one specific stamp
-get '/api/stamp/:id' do
-  @stamp = Stamp.find(params[:id])
+# returns information about one specific package
+get '/api/package/:id' do
+  @package = Package.find(params[:id])
   content_type :json
-  @stamp.to_json
+  @package.to_json
 end
 
-# returns information about all stamps owned by specified user
-get '/api/stamps/user/:id' do
-  my_stamps = UserStamp.where(:user_id => params[:id]).map {|us| us.stamp_id}
-  @stamps = Stamp.where(:id => my_stamps)
+# returns information about all packages owned by specified user
+get '/api/packages/user/:id' do
+  my_packages = UserPackage.where(:user_id => params[:id]).map {|us| us.package_id}
+  @packages = Package.where(:id => my_packages)
   content_type :json
-  @stamps.to_json
+  @packages.to_json
 end
 
-# purchases a stamp for a user and deducts peanuts appropriately
-# returns a stamp if purchased, or an empty JSON object if it failed
-# (stamp no longer available, user already owns, not enough peanuts, etc.)
-post '/api/purchase/:userid/:stampid' do
-  stamp = Stamp.find_by(:id => params[:stampid])
+# purchases a package for a user and deducts peanuts appropriately
+# returns a package if purchased, or an empty JSON object if it failed
+# (package no longer available, user already owns, not enough peanuts, etc.)
+post '/api/purchase/:userid/:pid' do
+  package = Package.find_by(:id => params[:pid])
   user = User.find_by(:id => params[:userid])
-  if !stamp || UserStamp.find_by(:user_id => user.id, :stamp_id => stamp.id) || user.peanuts < stamp.price
-    stamp = nil
+  if !package || UserPackage.find_by(:user_id => user.id, :package_id => package.id) || user.peanuts < package.price
+    package = nil
   else
-    UserStamp.create(:user_id => user.id, :stamp_id => stamp.id)
-    user.peanuts -= stamp.price
+    UserPackage.create(:user_id => user.id, :package_id => package.id)
+    user.peanuts -= package.price
     user.save
   end
   content_type :json
-  stamp.to_json
+  package.to_json
 end
 
 # increments level by one
@@ -260,12 +257,12 @@ post '/api/give/:id/:value' do
   user.to_json
 end
 
-# remove all stamps for a user - testing purposes only
+# remove all packages for a user - testing purposes only
 get '/api/clear/:id' do
   user = User.find(params[:id])
-  UserStamp.destroy_all(:user_id => user.id)
+  UserPackage.destroy_all(:user_id => user.id)
   content_type :json
-  UserStamp.all.to_json
+  UserPackage.all.to_json
 end
 
 # add a user to the lobby

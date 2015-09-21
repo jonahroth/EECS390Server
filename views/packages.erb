@@ -9,7 +9,7 @@
   </tr>
 
 
-  <% @stamps.each do |s| %>
+  <% @packages.each do |s| %>
     <tr>
       <td><%= s.name %></td>
       <td><%= s.price %></td>
@@ -18,7 +18,7 @@
         <% if @mine.include? s.id %>
           Already purchased
         <% elsif s.price <= @peanuts %>
-          <form action="/purchase" method="POST">
+          <form action="/packages" method="POST">
             <input type="hidden" name="id" value="<%= s.id %>" />
             <input type="submit" value="Buy Now" />
           </form>
