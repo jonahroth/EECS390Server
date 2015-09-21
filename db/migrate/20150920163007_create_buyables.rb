@@ -5,5 +5,6 @@ class CreateBuyables < ActiveRecord::Migration
       t.integer   :price
       t.text      :description
       t.string    :path
+    end
   end
 end

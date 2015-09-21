@@ -3,16 +3,24 @@ require 'sinatra/activerecord'
 require './config/environments' #database configuration
 require 'json'
 require './models/user'
-require './models/stamp'
-require './models/user_stamp'
+#require './models/stamp'
+#require './models/user_stamp'
+require './models/package'
+require './models/user_package'
 require './models/lobby'
-require './models/emoji'
-require './models/equipment'
+#require './models/emoji'
+#require './models/equipment'
 require 'bcrypt'
 
 enable :sessions
 
 =begin TODO
+
+  get rid of all buyable stuff right now
+  create one thing called "package"
+  assume that selection of what's in the package etc is handled client side
+
+
   SQL table for users currently waiting
   Admin page to create new stamps and perhaps install a set of stamps
   Require validation on all user-specific API calls
