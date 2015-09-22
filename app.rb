@@ -217,12 +217,12 @@ end
 
 # purchases a package for a user and deducts peanuts appropriately
 # returns a package if purchased, or an empty JSON object if it failed
-# (package no longer available, user already owns, not enough peanuts, etc.)
+# (package no longer available, not enough peanuts, etc.)
 post '/api/purchase/:userid/:pid' do
   validate params
   package = Package.find_by(:id => params[:pid])
   user = User.find_by(:id => params[:userid])
-  if !package || UserPackage.find_by(:user_id => user.id, :package_id => package.id) || user.peanuts < package.price
+  if !package || user.peanuts < package.price
     package = nil
   else
     UserPackage.create(:user_id => user.id, :package_id => package.id)
