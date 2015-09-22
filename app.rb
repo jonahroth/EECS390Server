@@ -62,7 +62,13 @@ helpers do
     puts @user.username
     puts @user.password_hash
     puts BCrypt::Engine.hash_secret(x[:password], @user.salt)
-    return @user && @user.password_hash == BCrypt::Engine.hash_secret(x[:password], @user.salt)
+    id_eval = !params[:id] || (params[:id].to_i == @user.id)
+    puts "id_eval:" + id_eval.to_s
+    return @user && id_eval && @user.password_hash == BCrypt::Engine.hash_secret(x[:password], @user.salt)
+  end
+
+  def validate params
+    redirect '/api/invalid' unless valid params
   end
 
 end
@@ -202,6 +208,7 @@ end
 
 # returns information about all packages owned by specified user
 get '/api/packages/user/:id' do
+  validate params
   my_packages = UserPackage.where(:user_id => params[:id]).map {|us| us.package_id}
   @packages = Package.where(:id => my_packages)
   content_type :json
@@ -212,6 +219,7 @@ end
 # returns a package if purchased, or an empty JSON object if it failed
 # (package no longer available, user already owns, not enough peanuts, etc.)
 post '/api/purchase/:userid/:pid' do
+  validate params
   package = Package.find_by(:id => params[:pid])
   user = User.find_by(:id => params[:userid])
   if !package || UserPackage.find_by(:user_id => user.id, :package_id => package.id) || user.peanuts < package.price
@@ -227,6 +235,7 @@ end
 
 # increments level by one
 post '/api/levelup/:id' do
+  validate params
   begin
     user = User.find(params[:id])
     user.level += 1
@@ -289,4 +298,16 @@ get '/api/lobby' do
   lobby = Lobby.all.map { |l| [l.user_id, l.time_added, User.find(l.user_id).username] }
   content_type :json
   lobby.to_json
+end
+
+get '/setup' do
+  Package.create(:name => "Slow Package", :price => 50, :description => "It might contain something and it might not. You never know!")
+  Package.create(:name => "Regular Package", :price => 100, :description => "Contains a random wallpaper and random powerups.")
+  Package.create(:name => "Super Package", :price => 250, :description => "Contains 3 random wallpapers for a total of 5 random powerups.")
+  redirect '/packages'
+end
+
+get '/api/invalid' do
+  content_type :json
+  nil.to_json
 end
