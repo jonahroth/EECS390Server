@@ -11,21 +11,15 @@ require 'bcrypt'
 enable :sessions
 
 =begin TODO
-
-  get rid of all buyable stuff right now
-  create one thing called "package"
-  assume that selection of what's in the package etc is handled client side
-
-
-  SQL table for users currently waiting
-  Admin page to create new packages and perhaps install a set of packages
-  Require validation on all user-specific API calls
-  On matchmaking - send data about which emojis are equipped, etc
-  Framework for purchasing and storing emojis
-  Check gamedoc - we need info about all equipment that a user has
-  EQUIPMENT is what you can buy - wallpaper, package, emojis
-  Wallpapers and packages get used up after you equip them
-
+  Ability to remove users from lobby somehow                        << on hold
+  On matchmaking - send data about which emojis are equipped, etc   << on hold - need to know how matchmaking is handled
+  Framework for purchasing and storing emojis                       << stretch goal
+  Check gamedoc - we need info about all equipment that a user has  << on hold - goes along with matchmaking
+  Are package contents handled client side or server side?          << server side
+    What information does the UI team need?
+    Harry and David have more information
+  Will payments be handled through Sinatra server or directly from client UI to Google Play?
+  Rank - how is rank calculated? Server side or client? What data needs to get sent back to the server and when?
 =end
 
 helpers do
@@ -312,5 +306,6 @@ end
 
 get '/api/invalid' do
   content_type :json
+  status 401
   nil.to_json
 end
