@@ -8,6 +8,7 @@
 - To test locally: Make HTTP requests to `127.0.0.1:4567`
 
 # What each path does
+[Out of date - see the google doc for current info. To be updated in an upcoming commit.]
 
 **Paths that return HTML**
 Path | Function
