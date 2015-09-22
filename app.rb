@@ -263,6 +263,7 @@ end
 
 # give some number of peanuts to a user
 post '/api/give/:id/:value' do
+  validate params
   user = User.find(params[:id].to_i)
   user.peanuts += params[:value].to_i
   user.save
@@ -272,6 +273,7 @@ end
 
 # remove all packages for a user - testing purposes only
 get '/api/clear/:id' do
+  validate params
   user = User.find(params[:id])
   UserPackage.destroy_all(:user_id => user.id)
   content_type :json
@@ -280,6 +282,7 @@ end
 
 # add a user to the lobby
 post '/api/wait/:id' do
+  validate params
   lobby = Lobby.all.to_a
   puts lobby
   user = User.find(params[:id])
