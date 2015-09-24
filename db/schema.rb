@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150924031902) do
+ActiveRecord::Schema.define(version: 20150924130401) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,10 @@ ActiveRecord::Schema.define(version: 20150924031902) do
     t.string  "name"
     t.integer "price"
     t.text    "description"
+    t.integer "min_powerups"
+    t.integer "max_powerups"
+    t.integer "min_wallpapers"
+    t.integer "max_wallpapers"
   end
 
   create_table "powerups", force: :cascade do |t|
@@ -42,9 +46,11 @@ ActiveRecord::Schema.define(version: 20150924031902) do
   end
 
   create_table "user_packages", force: :cascade do |t|
-    t.datetime "date_purchased"
-    t.text     "wallpapers",     default: [], array: true
-    t.text     "powerups",       default: [], array: true
+    t.text     "wallpapers",    default: [], array: true
+    t.text     "powerups",      default: [], array: true
+    t.integer  "user_id"
+    t.integer  "package_id"
+    t.datetime "purchase_date"
   end
 
   create_table "user_purchases", force: :cascade do |t|
