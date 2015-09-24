@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150922133638) do
+ActiveRecord::Schema.define(version: 20150924031902) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,11 +27,31 @@ ActiveRecord::Schema.define(version: 20150922133638) do
     t.text    "description"
   end
 
+  create_table "powerups", force: :cascade do |t|
+    t.string "name"
+    t.string "path"
+    t.string "identifier"
+    t.text   "description"
+  end
+
+  create_table "purchasables", force: :cascade do |t|
+    t.string  "name"
+    t.integer "price"
+    t.text    "description"
+    t.string  "type"
+  end
+
   create_table "user_packages", force: :cascade do |t|
-    t.integer  "user_id"
-    t.integer  "package_id"
-    t.text     "contents"
     t.datetime "date_purchased"
+    t.text     "wallpapers",     default: [], array: true
+    t.text     "powerups",       default: [], array: true
+  end
+
+  create_table "user_purchases", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "purchasable_id"
+    t.datetime "purchase_date"
+    t.string   "type"
   end
 
   create_table "users", force: :cascade do |t|
@@ -44,6 +64,13 @@ ActiveRecord::Schema.define(version: 20150922133638) do
     t.date    "last_signed_in"
     t.integer "peanuts"
     t.integer "rank"
+  end
+
+  create_table "wallpapers", force: :cascade do |t|
+    t.string "name"
+    t.string "path"
+    t.string "identifier"
+    t.text   "description"
   end
 
 end
