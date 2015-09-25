@@ -62,6 +62,7 @@ helpers do
   # creates user entries for a package and returns the appropriate
   # number of associated wallpapers and powerups. DOES NOT spend
   # peanuts or perform any kind of validation
+  # TODO known issue: user_wallpaper_id is still assigned incorrectly
   def pack_package id, user_id
     data = {}
     data[:package] = Package.find(id)
@@ -103,6 +104,37 @@ helpers do
     )
 
     return data
+  end
+
+  # returns all UserPackage, UserWallpaper, and UserPowerup items
+  # if detailed = true, also returns the corresponding package,
+  # wallpaper, and powerup items
+  #
+  # different from pack_package format in that UserWallpaper
+  # objects contain UserPowerup objects
+  #
+  # assumes user_id has already been validated
+  def inventory user_id, detailed = false
+    data = {}
+    my_wallpapers_raw = UserWallpaper.where(:user_id => user_id)
+    my_wallpapers = my_wallpapers_raw.to_a
+    my_powerups = UserPowerup.where(:user_id => user_id)
+    my_wallpapers.each_with_index do |w, i|
+      my_wallpapers[i] = w.attributes
+      my_wallpapers[i][:powerups] = my_powerups.where(:user_wallpaper_id => my_wallpapers[i][:id]).map {|w| w.attributes}
+    end
+
+    data[:user_wallpapers] = my_wallpapers
+    data[:user_powerups] = my_powerups.to_a
+    data[:user_packages] = UserPackage.where(:user_id => user_id).to_a
+
+    if detailed
+      data[:powerups] = Powerup.where(:id => my_powerups.map {|p| p.id}).map {|p| p.attributes}
+      data[:wallpapers] = Wallpaper.where(:id => my_wallpapers_raw.map {|w| w.id}).map {|w| w.attributes} # why doesn't this line work?
+    end
+
+    return data
+
   end
 
 end

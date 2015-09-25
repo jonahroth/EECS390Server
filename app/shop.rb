@@ -53,13 +53,19 @@ post '/api/purchase/:userid/:pid' do
 
 end
 
-post '/api/inventory/:userid' do
+get '/api/inventory/:userid' do
   validate params
-  user = User.find_by(:id => params[:userid].to_i)
-  user_packages = UserPackage.where(:user_id => user.id).to_a
-  wallpapers = []
-  powerups = []
-  user_packages.each do |up|
+  data = inventory params[:userid].to_i
 
-  end
+  content_type :json
+  data.to_json
 end
+=begin THIS FUNCTION CALL DOESN'T WORK YET
+get '/api/inventory/detailed/:userid' do
+  validate params
+  data = inventory params[:userid].to_i, true
+
+  content_type :json
+  data.to_json
+end
+=end
