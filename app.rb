@@ -58,13 +58,14 @@ helpers do
 
   def valid x
     @user = User.find_by(:username => x[:username])
+    return false if @user.nil?
     puts x
     puts @user.username
     puts @user.password_hash
     puts BCrypt::Engine.hash_secret(x[:password], @user.salt)
     id_eval = !params[:id] || (params[:id].to_i == @user.id)
     puts "id_eval:" + id_eval.to_s
-    return @user && id_eval && @user.password_hash == BCrypt::Engine.hash_secret(x[:password], @user.salt)
+    return id_eval && @user.password_hash == BCrypt::Engine.hash_secret(x[:password], @user.salt)
   end
 
   def validate params
