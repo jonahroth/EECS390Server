@@ -1,7 +1,7 @@
 =begin requests
 X Buy peanuts
 X Buy random package
-Load user inventory (wallpapers, emotes). Include all item names, descriptions, thumbnails, detail images
+/ Load user inventory (wallpapers, emotes). Include all item names, descriptions, thumbnails, detail images
 Re-roll item powers
 Add power to item
 Possible other requests:

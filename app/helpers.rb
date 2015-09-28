@@ -26,6 +26,24 @@ helpers do
     me.save
   end
 
+  def jsonize x
+    if x.is_a?(Array)
+      a = []
+      x.each do |i|
+        a.append i.to_json
+      end
+      a
+    elsif x.is_a?(Hash)
+      a = {}
+      x.each do |k, v|
+        a[k.to_json] = v.to_json
+      end
+      a
+    else
+      x.to_json
+    end
+  end
+
   def valid x
     @user = User.find_by(:username => x[:username])
     return false if @user.nil?
@@ -108,7 +126,7 @@ helpers do
   end
 
   # returns all UserPackage, UserWallpaper, and UserPowerup items
-  # if detailed = true, also returns the corresponding package,
+  # if detailed == true, also returns the corresponding package,
   # wallpaper, and powerup items
   #
   # different from pack_package format in that UserWallpaper
@@ -131,7 +149,7 @@ helpers do
 
     if detailed
       data[:powerups] = Powerup.where(:id => my_powerups.map {|p| p.id}).map {|p| p.attributes}
-      data[:wallpapers] = Wallpaper.where(:id => UserWallpaper.where(:user_id => user_id).map {|w| w.id}).map {|w| w.attributes} # why doesn't this line work?
+      data[:wallpapers] = Wallpaper.where(:id => UserWallpaper.where(:user_id => user_id).map {|w| w.id}).map {|w| w.attributes}
     end
 
     return data

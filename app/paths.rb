@@ -219,8 +219,8 @@ get '/setup' do
   Wallpaper.create(:name => "Water Wallpaper", :description => "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", :identifier => "w_water")
 
   Powerup.create(:name => "Magic Mushroom", :description => "Does what you think it does.", :identifier => 'p_mushroom')
-  Powerup.create(:name => "Rainbow Star", :description => "You move faster and some fun music plays.", :identifier => 'p_star')
-  Powerup.create(:name => "Lucky Charms", :description => "We'll welcome thee home with open arms, so glad you took your lucky charms.", :identifier => 'p_charms')
+  Powerup.create(:name => "That star thing", :description => "You move faster and some fun music plays.", :identifier => 'p_star')
+  Powerup.create(:name => "Lucky Charms", :description => "This isn't actually a powerup, it's just a breakfast cereal.", :identifier => 'p_charms')
 
 
   redirect '/packages'
