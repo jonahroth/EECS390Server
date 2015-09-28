@@ -28,13 +28,14 @@ helpers do
 
   def valid x
     @user = User.find_by(:username => x[:username])
+    return false if @user.nil?
     puts x
     puts @user.username
     puts @user.password_hash
     puts BCrypt::Engine.hash_secret(x[:password], @user.salt)
     id_eval = !params[:id] || (params[:id].to_i == @user.id)
     puts "id_eval:" + id_eval.to_s
-    return @user && id_eval && @user.password_hash == BCrypt::Engine.hash_secret(x[:password], @user.salt)
+    return id_eval && @user.password_hash == BCrypt::Engine.hash_secret(x[:password], @user.salt)
   end
 
   def validate params
@@ -130,7 +131,7 @@ helpers do
 
     if detailed
       data[:powerups] = Powerup.where(:id => my_powerups.map {|p| p.id}).map {|p| p.attributes}
-      data[:wallpapers] = Wallpaper.where(:id => my_wallpapers_raw.map {|w| w.id}).map {|w| w.attributes} # why doesn't this line work?
+      data[:wallpapers] = Wallpaper.where(:id => UserWallpaper.where(:user_id => user_id).map {|w| w.id}).map {|w| w.attributes} # why doesn't this line work?
     end
 
     return data

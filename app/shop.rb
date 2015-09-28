@@ -60,7 +60,7 @@ get '/api/inventory/:userid' do
   content_type :json
   data.to_json
 end
-=begin THIS FUNCTION CALL DOESN'T WORK YET
+
 get '/api/inventory/detailed/:userid' do
   validate params
   data = inventory params[:userid].to_i, true
@@ -68,4 +68,3 @@ get '/api/inventory/detailed/:userid' do
   content_type :json
   data.to_json
 end
-=end
