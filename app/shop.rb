@@ -2,7 +2,7 @@
 X Buy peanuts
 X Buy random package
 / Load user inventory (wallpapers, emotes). Include all item names, descriptions, thumbnails, detail images
-Re-roll item powers
+/ Re-roll item powers
 Add power to item
 Possible other requests:
 Mr. Goods contextual speech
@@ -67,4 +67,50 @@ get '/api/inventory/detailed/:userid' do
 
   content_type :json
   data.to_json
+end
+
+# re-rolls the powerups for the given wallpaper.
+# returns the new wallpaper and changes the data
+# on the server
+get '/api/reroll/:userid/:uwid' do
+  validate params
+  user_wallpaper = UserWallpaper.find_by(:id => params[:uwid].to_i)
+  user = User.find_by(:id => params[:userid].to_i)
+
+  init_check = user && user_wallpaper && user_wallpaper.user_id == user.id
+  redirect '/api/invalid' unless init_check
+
+  user_powerups = UserPowerup.where(:user_wallpaper_id => user_wallpaper.id)
+  redirect '/api/invalid' if user_powerups.empty?
+
+  valid_powerups = Powerup.all.map {|p| p.id}
+
+  user_powerups.each do |up|
+    up.powerup_id = valid_powerups.sample
+    up.save
+  end
+
+  data = {}
+  data[:user_wallpaper] = user_wallpaper
+  data[:user_powerups] = user_powerups
+
+  content_type :json
+  data.to_json
+
+end
+
+get '/api/addpower/:userid/:uwid' do
+  validate params
+
+  user_wallpaper = UserWallpaper.find_by(:id => params[:uwid].to_i)
+  user = User.find_by(:id => params[:userid].to_i)
+
+  init_check = user && user_wallpaper && user_wallpaper.user_id == user.id
+  redirect '/api/invalid' unless init_check
+
+  powerup = rnd_powerups(1)[0]
+  user_powerup = UserPowerup.create(:user_id => user.id, :user_wallpaper_id => user_wallpaper.id, :powerup_id => powerup.id)
+
+  content_type :json
+  user_powerup.to_json
 end
