@@ -2,8 +2,8 @@
 X Buy peanuts
 X Buy random package
 / Load user inventory (wallpapers, emotes). Include all item names, descriptions, thumbnails, detail images
-/ Re-roll item powers
-Add power to item
+X Re-roll item powers
+X Add power to item
 Possible other requests:
 Mr. Goods contextual speech
 Equip item for gameplay
