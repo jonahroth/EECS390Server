@@ -54,7 +54,7 @@ end
 # re-rolls the powerups for the given wallpaper.
 # returns the new wallpaper and changes the data
 # on the server
-get '/api/reroll/:userid/:uwid' do
+post '/api/reroll/:userid/:uwid' do
   validate params
   user_wallpaper = UserWallpaper.find_by(:id => params[:uwid].to_i)
   user = User.find_by(:id => params[:userid].to_i)
@@ -81,7 +81,7 @@ get '/api/reroll/:userid/:uwid' do
 
 end
 
-get '/api/addpower/:userid/:uwid' do
+post '/api/addpower/:userid/:uwid' do
   validate params
 
   user_wallpaper = UserWallpaper.find_by(:id => params[:uwid].to_i)
