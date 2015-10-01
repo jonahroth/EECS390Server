@@ -35,8 +35,7 @@ post '/create' do
   @user.password_hash = password_hash
   @user.level = 1
   @user.peanuts = 0
-  @user.date_created = Time.now
-  @user.last_signed_in = Time.now
+  @user.last_signed_in = DateTime.now
   @user.save
 
   session[:username] = params[:user][:username]
@@ -92,6 +91,25 @@ end
 
 ### API CALLS TO RETURN JSON DATA ###
 # (API calls do not use cookies, sessions, or currently encryption/authentication of any kind)
+
+# creates new user with given username/password combination
+# requires params: username, password
+post '/api/create' do
+  password_salt = BCrypt::Engine.generate_salt
+  password_hash = BCrypt::Engine.hash_secret(params[:password], password_salt)
+
+  @user = User.new
+  @user.username = params[:username]
+  @user.salt = password_salt
+  @user.password_hash = password_hash
+  @user.level = 1
+  @user.peanuts = 0
+  @user.last_signed_in = DateTime.now
+  @user.save
+
+  content_type :json
+  @user.to_json
+end
 
 # returns status 204 if username-password combination is correct, 401 if not
 post '/api/validate' do

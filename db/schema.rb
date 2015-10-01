@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150924171251) do
+ActiveRecord::Schema.define(version: 20151001125920) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,11 +90,11 @@ ActiveRecord::Schema.define(version: 20150924171251) do
     t.string   "salt"
     t.string   "password_hash"
     t.string   "location"
-    t.date     "last_signed_in"
     t.integer  "peanuts"
     t.integer  "rank"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "last_signed_in"
   end
 
   create_table "wallpapers", force: :cascade do |t|
