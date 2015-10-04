@@ -22,10 +22,10 @@ class AddTimestampsEverywhere < ActiveRecord::Migration
       t.timestamps
     end
 
-    change_table :user_purchases do |t|
-      t.remove    :purchase_date
-      t.timestamps
-    end
+#    change_table :user_purchases do |t|
+#      t.remove    :purchase_date
+#      t.timestamps
+#    end
 
     change_table :users do |t|
       t.remove    :date_created
