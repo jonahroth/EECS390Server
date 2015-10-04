@@ -13,9 +13,9 @@ class AddTimestampsEverywhere < ActiveRecord::Migration
       t.timestamps
     end
 
-    change_table :purchasables do |t|
-      t.timestamps
-    end
+  #  change_table :purchasables do |t|
+  #    t.timestamps
+  #  end
 
     change_table :user_packages do |t|
       t.remove    :purchase_date
