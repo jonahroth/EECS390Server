@@ -1,7 +1,7 @@
 class FixUserPackages < ActiveRecord::Migration
   def up
     change_table :user_packages do |t|
-      t.integer     :user_id
+#      t.integer     :user_id
       t.integer     :package_id
       t.remove      :date_purchased
       t.datetime    :purchase_date
