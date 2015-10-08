@@ -1,0 +1,16 @@
+Speed-Up,Pack Pal speed-up.,player,pp_speed
+Climb-Up,Pack Pal climb speed-up.,player,pp_climb
+Quick Fall,Pack Pal fall speed-up.,player,pp_fall
+Fast Shipping,Pack Pal respawn speed-up.,player,pp_respawn
+Fast Dispatch,Pack Pal speed boost after respawn.,player,pp_boost
+Crunch Time Walk,Super speed boost for last 20 seconds of game.,player,pp_finalwalk
+Crunch Time Climb,Super climb boost for last 20 seconds of game.,player,pp_finalclimb
+Bully Box,Bumping into the enemy Pack Pal steals a small number of peanuts.,player,pp_bully
+Tracker,See when a player’s camera is where your camera is.,player,pp_track
+Stamp Collector,Increase power stamp duration.,player,pp_stamptime
+Extra Packing,Reduce peanuts lost after death.,player,pp_savepeanut
+Platform Bonus 1,Platform create speed-up.,platform,pl_createup
+Platform Bonus 2,Platform destroy speed-up.,platform,pl_destroyup
+Platform Bonus 3,Platform destroy speed-down for my platforms.,platform,pl_destroydown
+Platform Bonus 4,Extra platform create.,platform,pl_extra
+Platform Bonus 5,Reduce cool down time.,platform,pl_cooldown
