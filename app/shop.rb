@@ -31,6 +31,8 @@ post '/api/purchase/:userid/:pid' do
   end
 
   content_type :json
+  puts package_data
+  puts package_data.to_json
   package_data.to_json
 
 end

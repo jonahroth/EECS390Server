@@ -109,9 +109,6 @@ helpers do
       data[:powerups].append these_powerups.flatten
     end
 
-    puts data[:powerups].to_json
-    puts "LENGTH: " + data[:powerups].length.to_s
-
     # TODO make each wallpaper in a package have a variable number of powerups
 
     data[:user_wallpapers] = []
@@ -121,9 +118,6 @@ helpers do
         :wallpaper_id => w.id
       )
     end
-
-    puts data[:user_wallpapers].to_json
-    puts "LENGTH: " + data[:user_wallpapers].length.to_s
 
     data[:user_powerups] = []
     data[:powerups].each_with_index do |p, i|
