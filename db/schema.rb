@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151006130027) do
+ActiveRecord::Schema.define(version: 20151008165217) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,12 +26,11 @@ ActiveRecord::Schema.define(version: 20151006130027) do
     t.string   "name"
     t.integer  "price"
     t.text     "description"
-    t.integer  "min_powerups"
-    t.integer  "max_powerups"
     t.integer  "min_wallpapers"
     t.integer  "max_wallpapers"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "powerup_hash"
   end
 
   create_table "powerups", force: :cascade do |t|
@@ -43,15 +42,6 @@ ActiveRecord::Schema.define(version: 20151006130027) do
     t.datetime "updated_at"
     t.boolean  "used",        default: false
     t.string   "power_type",  default: "player", null: false
-  end
-
-  create_table "purchasables", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "price"
-    t.text     "description"
-    t.string   "type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
   create_table "user_packages", force: :cascade do |t|
@@ -67,14 +57,6 @@ ActiveRecord::Schema.define(version: 20151006130027) do
     t.integer  "user_id"
     t.integer  "user_wallpaper_id"
     t.integer  "powerup_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "user_purchases", force: :cascade do |t|
-    t.integer  "user_id"
-    t.integer  "purchasable_id"
-    t.string   "type"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

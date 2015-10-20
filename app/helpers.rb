@@ -62,11 +62,18 @@ helpers do
     redirect '/api/invalid' unless valid params
   end
 
-  def rnd_powerups x
+  def rnd_powerups x, type = nil
     powerups = []
-    count = Powerup.count
-    x.times do
-      powerups.append Powerup.offset(rand(count)).first
+    if type.nil?
+      count = Powerup.count
+      x.times do
+        powerups.append Powerup.offset(rand(count)).first
+      end
+    else
+      count = Powerup.where(:power_type => type).count
+      x.times do
+        powerups.append Powerup.where(:power_type => type).offset(rand(count)).first
+      end
     end
     powerups
   end
@@ -84,19 +91,28 @@ helpers do
   # number of associated wallpapers and powerups. DOES NOT spend
   # peanuts or perform any kind of validation
   # TODO known issue: user_wallpaper_id is still assigned incorrectly
-  def pack_package id, user_id
+  # optionally, include a type hash of the form {"player" => 2, "platform" => 3}
+  # TODO ensure that type hashes are implemented everywhere that packages are created
+  def pack_package id, user_id, type_hash = nil
     data = {}
     data[:package] = Package.find(id)
+
+    type_hash = JSON.parse data[:package].powerup_hash
 
     data[:wallpapers] = rnd_wallpapers rand((data[:package].min_wallpapers)..(data[:package].max_wallpapers))
     data[:powerups] = []
     data[:wallpapers].each do |w|
-      data[:powerups].append rnd_powerups rand((data[:package].min_powerups)..(data[:package].max_powerups))
+      these_powerups = []
+      type_hash.each do |type, number|
+        these_powerups.append rnd_powerups number, type
+      end
+      data[:powerups].append these_powerups.flatten
     end
-    # TODO make each wallpaper in a package have a variable number of powerups
 
-    puts data[:wallpapers].to_json
     puts data[:powerups].to_json
+    puts "LENGTH: " + data[:powerups].length.to_s
+
+    # TODO make each wallpaper in a package have a variable number of powerups
 
     data[:user_wallpapers] = []
     data[:wallpapers].each do |w|
@@ -105,6 +121,9 @@ helpers do
         :wallpaper_id => w.id
       )
     end
+
+    puts data[:user_wallpapers].to_json
+    puts "LENGTH: " + data[:user_wallpapers].length.to_s
 
     data[:user_powerups] = []
     data[:powerups].each_with_index do |p, i|
