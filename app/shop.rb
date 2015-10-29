@@ -30,10 +30,10 @@ post '/api/purchase/:userid/:pid' do
     package_data = pack_package params[:pid].to_i, params[:userid].to_i
   end
 
+  data = {:package => package_data, :user => user}
+
   content_type :json
-  puts package_data
-  puts package_data.to_json
-  package_data.to_json
+  data.to_json
 
 end
 
