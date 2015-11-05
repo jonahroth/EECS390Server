@@ -1,4 +1,4 @@
-class MatchData < ActiveRecord::Migration
+class MatchDataMigration < ActiveRecord::Migration
   def up
     create_table :matches do |t|
       t.timestamps

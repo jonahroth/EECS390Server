@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151020195057) do
+ActiveRecord::Schema.define(version: 20151022124845) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,6 +20,21 @@ ActiveRecord::Schema.define(version: 20151020195057) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "match_participants", force: :cascade do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+    t.integer  "match_id"
+    t.boolean  "winner",     default: false
+    t.integer  "score",      default: 0
+  end
+
+  create_table "matches", force: :cascade do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "match_datetime"
   end
 
   create_table "packages", force: :cascade do |t|
@@ -79,6 +94,8 @@ ActiveRecord::Schema.define(version: 20151020195057) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "last_signed_in"
+    t.boolean  "facebook",       default: false
+    t.string   "name"
   end
 
   create_table "wallpapers", force: :cascade do |t|
