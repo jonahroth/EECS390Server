@@ -33,7 +33,7 @@ users have experience (peanuts) to keep track of
 rank increases or decreases based on peanuts - don't worry about it for now
 =end
 
-
+  validate params
   data = JSON.parse params[:data]
 
   this_match = Match.create(:match_datetime => DateTime.parse(data["datetime"]))
@@ -65,11 +65,13 @@ rank increases or decreases based on peanuts - don't worry about it for now
 
 end
 
+# returns all matches
 get '/api/match' do
   content_type :json
   Match.all.to_json
 end
 
+# returns the specified match
 get '/api/match/:id' do
   index = params[:id].to_i
   match = Match.find_by(:id => index)
@@ -78,6 +80,7 @@ get '/api/match/:id' do
   match.to_json
 end
 
+# returns all matches with a given user as a participant
 get '/api/match/user/:id' do
   matches = MatchParticipant.where(:user_id => params[:id].to_i).map {|mp| Match.find_by(:id => mp.match_id)}.uniq
 
