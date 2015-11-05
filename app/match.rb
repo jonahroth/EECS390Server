@@ -4,6 +4,7 @@
 # params[:data] : JSON object of the form
 {
   "datetime": <match date/time in standard format>,
+  "level": <x where xbox is the name of the level, e.g. "birch" or "beach">,
   "players": [
     {
       "id": <userid>,
@@ -36,7 +37,7 @@ rank increases or decreases based on peanuts - don't worry about it for now
   validate params
   data = JSON.parse params[:data]
 
-  this_match = Match.create(:match_datetime => DateTime.parse(data["datetime"]))
+  this_match = Match.create(:match_datetime => DateTime.parse(data["datetime"]), :level => data["level"] || "birch")
 
   participants = []
 
