@@ -30,13 +30,13 @@ helpers do
     if x.is_a?(Array)
       a = []
       x.each do |i|
-        a.append i.to_json
+        a.append jsonize i
       end
       a
     elsif x.is_a?(Hash)
       a = {}
       x.each do |k, v|
-        a[k.to_json] = v.to_json
+        a[jsonize k] = jsonize v
       end
       a
     else
@@ -168,6 +168,35 @@ helpers do
     end
 
     return data
+
+  end
+
+  def make_user username, password, facebook
+
+    password_salt = BCrypt::Engine.generate_salt
+    password_hash = BCrypt::Engine.hash_secret(password, password_salt)
+
+    @user = nil
+
+    if User.find_by(:username => username) && facebook
+      while User.find_by(:username => username).any?
+        username = username + rand(10).to_s
+      end
+    end
+
+    @user = User.new
+    @user.username = username
+    @user.salt = password_salt
+    @user.password_hash = password_hash
+    @user.level = 10000
+    @user.peanuts = 100
+    @user.facebook = !!facebook
+    @user.name = facebook[:name] if facebook
+    @user.last_signed_in = DateTime.now
+    @user.rank = nil
+    @user.save
+
+    return @user
 
   end
 
