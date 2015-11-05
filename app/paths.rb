@@ -23,24 +23,28 @@ end
 # creates and commits username-password combination
 post '/create' do
 
-  puts "PARAMS:"
-  puts params
+  if params[:username] != "" && !params[:username].nil? && params[:password] != "" && !params[:password].nil?
 
-  password_salt = BCrypt::Engine.generate_salt
-  password_hash = BCrypt::Engine.hash_secret(params[:user][:password], password_salt)
+    puts "PARAMS:"
+    puts params
 
-  @user = User.new
-  @user.username = params[:user][:username]
-  @user.salt = password_salt
-  @user.password_hash = password_hash
-  @user.level = 1
-  @user.peanuts = 0
-  @user.last_signed_in = DateTime.now
-  @user.save
+    password_salt = BCrypt::Engine.generate_salt
+    password_hash = BCrypt::Engine.hash_secret(params[:user][:password], password_salt)
 
-  session[:username] = params[:user][:username]
-  redirect "/about/#{@user.id}"
+    @user = User.new
+    @user.username = params[:user][:username]
+    @user.salt = password_salt
+    @user.password_hash = password_hash
+    @user.level = 1
+    @user.peanuts = 0
+    @user.last_signed_in = DateTime.now
+    @user.save
 
+    session[:username] = params[:user][:username]
+    redirect "/about/#{@user.id}"
+  else
+    redirect '/'
+  end
 
 end
 
