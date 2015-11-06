@@ -231,23 +231,6 @@ get '/api/lobby' do
   lobby.to_json
 end
 
-get '/setup' do
-  Package.create(:name => "Slow Package", :price => 50, :description => "It might contain something and it might not. You never know!", :min_powerups => 0, :max_powerups => 1, :min_wallpapers => 1, :max_wallpapers => 1)
-  Package.create(:name => "Regular Package", :price => 100, :description => "Contains a random wallpaper and random powerups.", :min_powerups => 1, :max_powerups => 3, :min_wallpapers => 1, :max_wallpapers => 1)
-  Package.create(:name => "Super Package", :price => 400, :description => "Contains 3 random wallpapers for a total of 5 guaranteed random powerups.", :min_powerups => 5, :max_powerups => 5, :min_wallpapers => 3, :max_wallpapers => 3)
-
-  Wallpaper.create(:name => "Birch Wallpaper", :description => "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", :identifier => "w_birch")
-  Wallpaper.create(:name => "Fire Wallpaper", :description => "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", :identifier => "w_fire")
-  Wallpaper.create(:name => "Water Wallpaper", :description => "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", :identifier => "w_water")
-
-  Powerup.create(:name => "Magic Mushroom", :description => "Does what you think it does.", :identifier => 'p_mushroom')
-  Powerup.create(:name => "That star thing", :description => "You move faster and some fun music plays.", :identifier => 'p_star')
-  Powerup.create(:name => "Lucky Charms", :description => "This isn't actually a powerup, it's just a breakfast cereal.", :identifier => 'p_charms')
-
-
-  redirect '/packages'
-end
-
 get '/api/invalid' do
   content_type :json
   status 401

@@ -200,4 +200,22 @@ helpers do
 
   end
 
+  def set_powerups
+    Powerup.destroy_all
+
+    CSV.foreach('./assets/csv/powerups.csv') do |row|
+      Powerup.create(:name => row[0], :description => row[1], :power_type => row[2], :identifier => row[3])
+    end
+
+  end
+
+  def set_wallpapers
+    Wallpaper.destroy_all
+
+    CSV.foreach('./assets/csv/wallpapers.csv') do |row|
+      Wallpaper.create(:name => row[0], :description => row[1], :identifier => row[2])
+    end
+
+  end
+
 end
