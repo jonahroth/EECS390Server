@@ -1,10 +1,13 @@
-=begin requests
-X Buy peanuts
-X Buy random package
-/ Load user inventory (wallpapers, emotes). Include all item names, descriptions, thumbnails, detail images
-X Re-roll item powers
-X Add power to item
-=end
+# get all wallpapers available
+get '/api/wallpapers' do
+  content_type :json
+  Wallpaper.all.to_json
+end
+
+get '/api/powerups' do
+  content_type :json
+  Powerup.all.to_json
+end
 
 # give some number of peanuts to a user
 post '/api/give/:id/:value' do
