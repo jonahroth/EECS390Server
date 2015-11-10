@@ -72,7 +72,7 @@ post '/api/reroll/:userid/:uwid/:internal' do
 
   valid_powerups = Powerup.all.map {|p| p.id}
 
-  this_powerup = valid_powerups.sample
+  this_powerup.powerup_id = valid_powerups.sample
   this_powerup.save
 
   user.peanuts -= 600
