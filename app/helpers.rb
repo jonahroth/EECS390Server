@@ -173,6 +173,47 @@ helpers do
 
   end
 
+  def new_inventory user_id
+    my_wallpapers = UserWallpaper.where(:user_id => user_id)
+    wallpapers = Wallpaper.where(:id => my_wallpapers.map{|w| w.wallpaper_id})
+    my_powerups = UserPowerup.where(:user_id => user_id)
+    powerups = Powerup.where(:id => my_powerups.map{|p| p.powerup_id})
+
+    data = JSON.parse my_wallpapers.to_json
+    puts data
+
+    data.each do |uw|
+      wdata = wallpapers.find(uw["wallpaper_id"])
+      wdata.attributes.each do |k, v|
+        unless (['id', 'created_at', 'updated_at'].include?(k))
+          uw[k] = wdata[k]
+        end
+      end
+
+      uw["powerups"] = []
+
+      these_powerups = my_powerups.where(:user_wallpaper_id => uw["id"])
+      these_powerups.each do |up|
+        updata = my_powerups.find_by(:id => up.id)
+        pdata = powerups.find_by(:id => up.powerup_id)
+        inventory_data = {}
+        updata.attributes.each do |k, v|
+          inventory_data[k] = updata[k]
+        end
+
+        pdata.attributes.each do |k,v|
+          unless(['id', 'created_at', 'updated_at'].include?(k))
+            inventory_data[k] = pdata[k]
+          end
+        end
+
+        uw["powerups"].append inventory_data
+
+      end
+
+    end
+  end
+
   def make_user username, password, facebook
 
     password_salt = BCrypt::Engine.generate_salt

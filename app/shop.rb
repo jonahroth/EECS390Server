@@ -42,7 +42,7 @@ end
 
 get '/api/inventory/:userid' do
   validate params
-  data = inventory params[:userid].to_i
+  data = new_inventory params[:userid].to_i
 
   content_type :json
   data.to_json
@@ -50,7 +50,7 @@ end
 
 get '/api/inventory/detailed/:userid' do
   validate params
-  data = inventory params[:userid].to_i, true
+  data = new_inventory params[:userid].to_i
 
   content_type :json
   data.to_json
