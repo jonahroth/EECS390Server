@@ -219,6 +219,8 @@ helpers do
       end
     end
 
+  end
+
   def set_powerups
     Powerup.destroy_all
 
