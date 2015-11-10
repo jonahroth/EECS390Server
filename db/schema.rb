@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151105140405) do
+ActiveRecord::Schema.define(version: 20151110022542) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -75,6 +75,7 @@ ActiveRecord::Schema.define(version: 20151105140405) do
     t.integer  "powerup_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "internal_order",    default: -1
   end
 
   create_table "user_wallpapers", force: :cascade do |t|

@@ -56,7 +56,7 @@ end
 # re-rolls the powerups for the given wallpaper.
 # returns the new wallpaper and changes the data
 # on the server
-post '/api/reroll/:userid/:uwid' do
+post '/api/reroll/:userid/:uwid/:internal' do
   validate params
   user_wallpaper = UserWallpaper.find_by(:id => params[:uwid].to_i)
   user = User.find_by(:id => params[:userid].to_i)
@@ -67,16 +67,22 @@ post '/api/reroll/:userid/:uwid' do
   user_powerups = UserPowerup.where(:user_wallpaper_id => user_wallpaper.id)
   redirect '/api/invalid' if user_powerups.empty?
 
+  this_powerup = user_powerups.find_by(:internal_order => params[:internal].to_i)
+  redirect '/api/invalid' if this_powerup.nil?
+
   valid_powerups = Powerup.all.map {|p| p.id}
 
-  user_powerups.each do |up|
-    up.powerup_id = valid_powerups.sample
-    up.save
-  end
+  this_powerup = valid_powerups.sample
+  this_powerup.save
+
+  user.peanuts -= 600
+  user.save
 
   data = {}
   data[:user_wallpaper] = user_wallpaper
   data[:user_powerups] = user_powerups
+  data[:this_powerup] = this_powerup
+  data[:peanuts] = user.peanuts
 
   content_type :json
   data.to_json
@@ -94,6 +100,8 @@ post '/api/addpower/:userid/:uwid' do
 
   powerup = rnd_powerups(1)[0]
   user_powerup = UserPowerup.create(:user_id => user.id, :user_wallpaper_id => user_wallpaper.id, :powerup_id => powerup.id)
+
+  restore_order user_wallpaper.id
 
   content_type :json
   user_powerup.to_json

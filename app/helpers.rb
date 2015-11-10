@@ -93,20 +93,20 @@ helpers do
   # TODO known issue: user_wallpaper_id is still assigned incorrectly
   # optionally, include a type hash of the form {"player" => 2, "platform" => 3}
   # TODO ensure that type hashes are implemented everywhere that packages are created
-  def pack_package id, user_id, type_hash = nil
+  def pack_package id, user_id, type_hash = nil, use_hash = false
     data = {}
     data[:package] = Package.find(id)
-
-    type_hash = JSON.parse data[:package].powerup_hash
-
     data[:wallpapers] = rnd_wallpapers rand((data[:package].min_wallpapers)..(data[:package].max_wallpapers))
-    data[:powerups] = []
-    data[:wallpapers].each do |w|
-      these_powerups = []
-      type_hash.each do |type, number|
-        these_powerups.append rnd_powerups number, type
+    if use_hash
+      type_hash |= JSON.parse data[:package].powerup_hash
+      data[:powerups] = []
+      data[:wallpapers].each do |w|
+        these_powerups = []
+        type_hash.each do |type, number|
+          these_powerups.append rnd_powerups number, type
+        end
+        data[:powerups].append these_powerups.flatten
       end
-      data[:powerups].append these_powerups.flatten
     end
 
     # TODO make each wallpaper in a package have a variable number of powerups
@@ -119,14 +119,16 @@ helpers do
       )
     end
 
-    data[:user_powerups] = []
-    data[:powerups].each_with_index do |p, i|
-      p.each do |powerup|
-        data[:user_powerups].append UserPowerup.create(
-          :user_id => user_id,
-          :powerup_id => powerup.id,
-          :user_wallpaper_id => data[:user_wallpapers][i].id
-        )
+    if use_hash
+      data[:user_powerups] = []
+      data[:powerups].each_with_index do |p, i|
+        p.each do |powerup|
+          data[:user_powerups].append UserPowerup.create(
+            :user_id => user_id,
+            :powerup_id => powerup.id,
+            :user_wallpaper_id => data[:user_wallpapers][i].id
+          )
+        end
       end
     end
 
@@ -198,6 +200,24 @@ helpers do
 
     return @user
 
+  end
+
+  def restore_order uw_id
+    uw = UserWallpaper.find_by(:id => uw_id)
+    return nil unless uw
+
+    ups = UserPowerup.where(:user_wallpaper_id => uw.id).order(:internal_order)
+    max_order = ups.map {|up| up.internal_order}.max
+    puts ups
+
+    acc = max_order + 1
+    ups.each do |up|
+      if up.internal_order < 0
+        up.internal_order = acc
+        up.save
+        acc += 1
+      end
+    end
   end
 
 end
