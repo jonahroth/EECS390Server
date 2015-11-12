@@ -266,7 +266,7 @@ helpers do
     Powerup.destroy_all
 
     CSV.foreach('./assets/csv/powerups.csv') do |row|
-      Powerup.create(:name => row[0], :description => row[1], :power_type => row[2], :identifier => row[3])
+      Powerup.create(:name => row[0], :description => row[1], :power_type => row[2], :identifier => row[3], :path => row[4])
     end
 
   end
@@ -275,7 +275,7 @@ helpers do
     Wallpaper.destroy_all
 
     CSV.foreach('./assets/csv/wallpapers.csv') do |row|
-      Wallpaper.create(:name => row[0], :description => row[1], :identifier => row[2])
+      Wallpaper.create(:name => row[0], :description => row[1], :identifier => row[2], :path => row[3])
     end
 
   end
