@@ -42,10 +42,23 @@ end
 
 get '/api/inventory/:userid' do
   validate params
+
   data = new_inventory params[:userid].to_i
 
   content_type :json
   data.to_json
+end
+
+get '/api/inventory/name/:username' do
+  validate params
+  q = User.find_by(:username => params[:username])
+  if q
+    data = new_inventory q.id
+    content_type :json
+    data.to_json
+  else
+    nil.to_json
+  end
 end
 
 get '/api/inventory/detailed/:userid' do
