@@ -122,3 +122,8 @@ post '/api/addpower/:userid/:uwid' do
   content_type :json
   user_powerup.to_json
 end
+
+get '/api/news' do
+  content_type :json
+  News.order(:created_at).limit(2).to_json
+end
