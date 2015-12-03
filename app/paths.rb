@@ -29,10 +29,10 @@ post '/create' do
     puts params
 
     password_salt = BCrypt::Engine.generate_salt
-    password_hash = BCrypt::Engine.hash_secret(params[:user][:password], password_salt)
+    password_hash = BCrypt::Engine.hash_secret(params[:password], password_salt)
 
     @user = User.new
-    @user.username = params[:user][:username]
+    @user.username = params[:username]
     @user.salt = password_salt
     @user.password_hash = password_hash
     @user.level = 1
@@ -40,7 +40,7 @@ post '/create' do
     @user.last_signed_in = DateTime.now
     @user.save
 
-    session[:username] = params[:user][:username]
+    session[:username] = params[:username]
     redirect "/about/#{@user.id}"
   else
     redirect '/'

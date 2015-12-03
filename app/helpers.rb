@@ -201,9 +201,11 @@ helpers do
           inventory_data[k] = updata[k]
         end
 
-        pdata.attributes.each do |k,v|
-          unless(['id', 'created_at', 'updated_at'].include?(k))
-            inventory_data[k] = pdata[k]
+        if pdata
+          pdata.attributes.each do |k,v|
+            unless(['id', 'created_at', 'updated_at'].include?(k))
+              inventory_data[k] = pdata[k]
+            end
           end
         end
 
